@@ -3,6 +3,7 @@ package puzzle
 import (
 	"fmt"
 	"math/rand"
+	"slices"
 )
 
 func Solve(initialState State, seed int64) []State {
@@ -14,17 +15,17 @@ func Solve(initialState State, seed int64) []State {
 	for len(queue) > 0 {
 		state = queue[0]
 		queue = queue[1:]
-		k := state.Key()
+		k := state.key()
 		if done[k] {
 			continue
 		}
 		done[k] = true
 
-		if state.IsGoal() {
+		if state.isGoal() {
 			break
 		}
 
-		states := state.NextStates()
+		states := state.nextStates()
 		rnd.Shuffle(len(states), func(i, j int) {
 			states[i], states[j] = states[j], states[i]
 		})
@@ -46,32 +47,31 @@ func Solve(initialState State, seed int64) []State {
 		results = append(results, pre)
 		state = pre
 	}
-
-	for i, j := 0, len(results)-1; i < j; i, j = i+1, j-1 {
-		results[i], results[j] = results[j], results[i]
-	}
+	slices.Reverse(results)
 	return results
 }
 
-const SpaceID = 0
-const GirlID = 1
+const (
+	spaceID = 0
+	girlID  = 1
+)
 
 type State [20]int
 
-func (s State) IsGoal() bool {
-	return s[13] == GirlID && s[14] == GirlID && s[17] == GirlID && s[18] == GirlID
+func (s State) isGoal() bool {
+	return s[13] == girlID && s[14] == girlID && s[17] == girlID && s[18] == girlID
 }
 
-func (s State) NextStates() []State {
+func (s State) nextStates() []State {
 	used := map[State]bool{s: true}
 	states := []State{}
 	for id := 1; id <= 10; id++ {
-		states1 := s.Move(id)
+		states1 := s.move(id)
 		for _, s1 := range states1 {
 			used[s1] = true
 			states = append(states, s1)
 
-			states2 := s1.Move(id)
+			states2 := s1.move(id)
 			for _, s2 := range states2 {
 				if !used[s2] {
 					states = append(states, s2)
@@ -83,9 +83,9 @@ func (s State) NextStates() []State {
 	return states
 }
 
-func (s State) Move(id int) []State {
+func (s State) move(id int) []State {
 	states := []State{}
-	if id == SpaceID {
+	if id == spaceID {
 		return states
 	}
 
@@ -118,7 +118,7 @@ func (s State) Move(id int) []State {
 				cs = append(cs, ci)
 				continue
 			}
-			if ns[ni] != SpaceID {
+			if ns[ni] != spaceID {
 				ok = false
 				break
 			}
@@ -132,7 +132,7 @@ func (s State) Move(id int) []State {
 	return states
 }
 
-func (s State) Key() string {
+func (s State) key() string {
 	keys := map[int]int{}
 	for i, id := range s {
 		keys[id]++
@@ -140,7 +140,7 @@ func (s State) Key() string {
 			keys[id]++
 		}
 	}
-	keys[SpaceID] = 0
+	keys[spaceID] = 0
 
 	key := ""
 	for _, id := range s {

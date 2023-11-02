@@ -26,7 +26,7 @@ func TestSolve(t *testing.T) {
 	}
 }
 
-func TestState_IsGoal(t *testing.T) {
+func TestState_isGoal(t *testing.T) {
 	tests := []struct {
 		name string
 		s    State
@@ -43,31 +43,31 @@ func TestState_IsGoal(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.IsGoal(); got != tt.want {
-				t.Errorf("State.IsGoal() = %v, want %v", got, tt.want)
+			if got := tt.s.isGoal(); got != tt.want {
+				t.Errorf("State.isGoal() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestState_NextStates(t *testing.T) {
+func TestState_nextStates(t *testing.T) {
 	tests := []struct {
 		name string
 		s    State
 		want int
 	}{
-		{"stage0-初手", Stages[0], 8},
+		{"stage0:start", Stages[0], 8},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.NextStates(); len(got) != tt.want {
-				t.Errorf("State.NextStates() = %v, want %v", len(got), tt.want)
+			if got := tt.s.nextStates(); len(got) != tt.want {
+				t.Errorf("State.nextStates() = %v, want %v", len(got), tt.want)
 			}
 		})
 	}
 }
 
-func TestState_Move(t *testing.T) {
+func TestState_move(t *testing.T) {
 	type args struct {
 		id int
 	}
@@ -91,14 +91,14 @@ func TestState_Move(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.Move(tt.args.id); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("State.Move() = %v, want %v", got, tt.want)
+			if got := tt.s.move(tt.args.id); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("State.move() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestState_Key(t *testing.T) {
+func TestState_key(t *testing.T) {
 	tests := []struct {
 		name string
 		s    State
@@ -108,8 +108,8 @@ func TestState_Key(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.Key(); got != tt.want {
-				t.Errorf("State.Key() = %v, want %v", got, tt.want)
+			if got := tt.s.key(); got != tt.want {
+				t.Errorf("State.key() = %v, want %v", got, tt.want)
 			}
 		})
 	}
